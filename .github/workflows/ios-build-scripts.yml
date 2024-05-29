@@ -43,13 +43,21 @@ jobs:
       - name: set up xcode
         run: echo "export DEVELOPER_DIR=/Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer" > ~/.xcode.for.ffmpeg.kit.sh
       - name: run the build script
-        run: ./ios.sh --disable-armv7 --disable-armv7s --disable-i386 --enable-ios-audiotoolbox --enable-ios-avfoundation --enable-ios-bzip2 --enable-ios-libiconv --enable-ios-videotoolbox --enable-ios-zlib
+        run: ./ios.sh --disable-armv7 --disable-armv7s --disable-x86-64 --disable-i386 --enable-ios-audiotoolbox --enable-ios-avfoundation --enable-ios-bzip2 --enable-ios-libiconv --enable-ios-videotoolbox --enable-ios-zlib
       - name: print build logs
         if: ${{ always() }}
         run: cat build.log
       - name: print ffbuild logs
         if: ${{ failure() }}
         run: '[[ -f ./src/ffmpeg/ffbuild/config.log ]] && tail -50 ./src/ffmpeg/ffbuild/config.log'
+      # - name: print build logs
+      #   run: zip ./prebuilt -o prebuilt.zip
+      - name: create artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: |
+            ./prebuilt
   # build-main-on-macos-ventura:
   #   name: ios main on ventura
   #   runs-on: macos-13
